@@ -13,10 +13,10 @@ function Gameboard() {
     const getBoard = () => board;
 
     const dropToken = (row, column, player) => {
-        if (board[row][column].getValue() === 0){
+        if (board[row][column].getValue() === 0) {
             board[row][column].addToken(player);
         }
-        else{
+        else {
             console.log("Cell taken, please select another!");
         }
     };
@@ -44,6 +44,7 @@ function Cell() {
         getValue
     };
 }
+
 
 
 function GameController(
@@ -82,19 +83,32 @@ function GameController(
             such as a win message. */
 
         const playerMark = getActivePlayer().token;
+        const boardArray = boardInstance.getBoard();
         // check row for winner  
-        for (let i = 0; i < boardInstance.getBoard().length; i++) {
-            let match = 0;
-            for (let j = 0; j < boardInstance.getBoard()[i].length; j++) {
-                const cellMark = boardInstance.getBoard()[i][j].getValue();
-                if (playerMark === cellMark) match++;
-                if ( match === boardInstance.getBoard()[i].length){
-                        console.log(`Winner is ${getActivePlayer().name}`);  
+        for (let i = 0; i < boardArray.length; i++) {
+            let matchRow = 0;
+            for (let j = 0; j < boardArray[i].length; j++) {
+                const cellMark = boardArray[i][j].getValue();
+                if (playerMark === cellMark) matchRow++;
+                if (matchRow === boardArray[i].length){
+                        console.log(`Winner is ${getActivePlayer().name}`);
+                    return playerMark
                 }
             }
         }
         // check column for winner
-
+        for (let i = 0; i < boardArray.length; i++){
+            let matchColumn = 0;
+            for (let j = 0; j < boardArray[i].length; j++) {
+                const cellMark = boardArray[j][i].getValue();
+                if (playerMark === cellMark) matchColumn++;
+                if (matchColumn === boardArray[i].length) {
+                    console.log(`Winner is ${getActivePlayer().name}`);
+                    return playerMark
+                }
+            }
+        }
+        // check diagonals for winner
 
         
 
@@ -113,5 +127,6 @@ function GameController(
 }
 
 const game = GameController();
+
 
 
