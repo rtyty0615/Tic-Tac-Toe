@@ -78,13 +78,31 @@ function GameController(
     const playRound = (row, column) => {
         
         boardInstance.dropToken(row, column, getActivePlayer().token);
-
         /*  This is where we would check for a winner and handle that logic,
             such as a win message. */
+
+        const playerMark = getActivePlayer().token;
+        // check row for winner  
+        for (let i = 0; i < boardInstance.getBoard().length; i++) {
+            let match = 0;
+            for (let j = 0; j < boardInstance.getBoard()[i].length; j++) {
+                const cellMark = boardInstance.getBoard()[i][j].getValue();
+                if (playerMark === cellMark) match++;
+                if ( match === boardInstance.getBoard()[i].length){
+                        console.log(`Winner is ${getActivePlayer().name}`);  
+                }
+            }
+        }
+        // check column for winner
+
+
+        
 
         switchPlayerTurn();
         printNewRound();
     };
+
+    // if playRound.playerMark winner
 
     printNewRound();
 
