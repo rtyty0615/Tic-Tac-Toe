@@ -109,6 +109,26 @@ function GameController(
             }
         }
         // check diagonals for winner
+        let matchDiagonalLeft = 0;
+        for (let i = 0; i < boardArray.length; i++) {
+            const cellMark = boardArray[i][i].getValue();
+            if (playerMark === cellMark) matchDiagonalLeft++;
+            if (matchDiagonalLeft === boardArray.length) {
+                console.log(`Winner is ${getActivePlayer().name}`);
+                return playerMark
+            }
+        }
+        let matchDiagonalRight = 0;
+        for (let i = 0; i < boardArray.length; i++) {
+            const cellMark = boardArray[boardArray.length-1-i][i].getValue();
+            if (playerMark === cellMark) matchDiagonalRight++;
+            if (matchDiagonalRight === boardArray.length) {
+                console.log(`Winner is ${getActivePlayer().name}`);
+                return playerMark
+            }
+        }
+
+
 
         
 
