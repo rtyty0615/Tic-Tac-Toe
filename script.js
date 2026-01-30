@@ -127,10 +127,16 @@ function GameController(
                 return playerMark
             }
         }
-
-
-
-        
+        // check tie
+        let matchTie = 0;
+        for (let i = 0; i < boardArray.length; i++) {
+            const row = boardArray[i];
+            if (row.every(cell => cell.getValue() !== 0)) matchTie++;
+            if (matchTie === boardArray.length) {
+                console.log("It's a tie!");
+                return null;
+            }
+        }
 
         switchPlayerTurn();
         printNewRound();
