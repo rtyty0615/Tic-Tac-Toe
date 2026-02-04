@@ -13,12 +13,7 @@ function Gameboard() {
     const getBoard = () => board;
 
     const dropToken = (row, column, player) => {
-        if (board[row][column].getValue() === 0) {
             board[row][column].addToken(player);
-        }
-        else {
-            console.log("Cell taken, please select another!");
-        }
     };
 
     const printBoard = () => {
@@ -79,11 +74,11 @@ function GameController(
     const playRound = (row, column) => {
         
         boardInstance.dropToken(row, column, getActivePlayer().token);
-        /*  This is where we would check for a winner and handle that logic,
-            such as a win message. */
 
         const playerMark = getActivePlayer().token;
         const boardArray = boardInstance.getBoard();
+        let winner = "";
+
         // check row for winner  
         for (let i = 0; i < boardArray.length; i++) {
             let matchRow = 0;
@@ -91,8 +86,8 @@ function GameController(
                 const cellMark = boardArray[i][j].getValue();
                 if (playerMark === cellMark) matchRow++;
                 if (matchRow === boardArray[i].length){
-                        console.log(`Winner is ${getActivePlayer().name}`);
-                    return playerMark
+                    winner = `Winner is ${getActivePlayer().name}`;
+                    return winner
                 }
             }
         }
@@ -103,8 +98,8 @@ function GameController(
                 const cellMark = boardArray[j][i].getValue();
                 if (playerMark === cellMark) matchColumn++;
                 if (matchColumn === boardArray[i].length) {
-                    console.log(`Winner is ${getActivePlayer().name}`);
-                    return playerMark
+                    winner = `Winner is ${getActivePlayer().name}`;
+                    return winner
                 }
             }
         }
@@ -114,8 +109,8 @@ function GameController(
             const cellMark = boardArray[i][i].getValue();
             if (playerMark === cellMark) matchDiagonalLeft++;
             if (matchDiagonalLeft === boardArray.length) {
-                console.log(`Winner is ${getActivePlayer().name}`);
-                return playerMark
+                winner = `Winner is ${getActivePlayer().name}`;
+                return winner
             }
         }
         let matchDiagonalRight = 0;
@@ -123,8 +118,9 @@ function GameController(
             const cellMark = boardArray[boardArray.length-1-i][i].getValue();
             if (playerMark === cellMark) matchDiagonalRight++;
             if (matchDiagonalRight === boardArray.length) {
-                console.log(`Winner is ${getActivePlayer().name}`);
-                return playerMark
+                // console.log(`Winner is ${getActivePlayer().name}`)
+                winner = `Winner is ${getActivePlayer().name}`;
+                return winner
             }
         }
         // check tie
@@ -133,26 +129,70 @@ function GameController(
             const row = boardArray[i];
             if (row.every(cell => cell.getValue() !== 0)) matchTie++;
             if (matchTie === boardArray.length) {
-                console.log("It's a tie!");
-                return null;
+                winner = "It's a tie!";
+                return winner;
             }
         }
 
         switchPlayerTurn();
         printNewRound();
+        
     };
-
-    // if playRound.playerMark winner
 
     printNewRound();
 
     return {
         playRound,
-        getActivePlayer
+        getActivePlayer,
+        getBoard: boardInstance.getBoard
     };
 }
 
-const game = GameController();
+
+function ScreenController(){
+    const game = GameController();
+    const playerTurnDiv = document.querySelector('#turn');
+    const boardDiv = document.querySelector('#board');
+    const winnerAnnounce = document.querySelector('#result');
+    
+    const updateScreen = () => {
+        boardDiv.textContent = "";
+        const displayBoard = game.getBoard();
+        const activePlayer = game.getActivePlayer();
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
+        for (let i = 0; i < displayBoard.length; i++) {
+            for (let j = 0; j < displayBoard.length; j++) {
+                const cell = document.createElement('button');
+                cell.textContent = displayBoard[i][j].getValue();
+                cell.classList.add("cell");
+                cell.dataset.row = i;
+                cell.dataset.column = j;
+                boardDiv.append(cell);
+            }
+        }
+    };
+
+    function clickHandlerBoard(e) {
+        const row = e.target.dataset.row;
+        const column = e.target.dataset.column;
+        if (row === undefined || column === undefined) return;
+        const displayBoard = game.getBoard();
+        if (displayBoard[row][column].getValue() === 0) {
+            const result = game.playRound(row, column);
+            updateScreen();
+            if (result) {
+                winnerAnnounce.textContent = result;
+                boardDiv.removeEventListener("click", clickHandlerBoard);
+            }
+        }
+    };
+
+    boardDiv.addEventListener("click", clickHandlerBoard);
+
+    updateScreen();
+}
 
 
+ScreenController()
 
