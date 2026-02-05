@@ -43,8 +43,8 @@ function Cell() {
 
 
 function GameController(
-    playerOneName = "Player One",
-    playerTwoName = "Player Two"
+    playerOneName,
+    playerTwoName
 ) {
     const boardInstance = Gameboard();
 
@@ -150,11 +150,44 @@ function GameController(
 
 
 function ScreenController(){
-    const game = GameController();
+    let game = GameController("Player One", "Player Two");
     const playerTurnDiv = document.querySelector('#turn');
     const boardDiv = document.querySelector('#board');
     const winnerAnnounce = document.querySelector('#result');
-    
+    const startGame = document.querySelector('#start');
+    const startBtn = document.createElement("button");
+    startBtn.textContent = "Start";
+    startBtn.id = "startBtn";
+    startGame.append(startBtn);
+
+    const dialog = document.querySelector("dialog");
+    const openDialog = document.querySelector('#startBtn');
+    openDialog.addEventListener('click', () => {
+        dialog.showModal();
+    });
+
+    const submitForm = document.querySelector('form');
+    submitForm.addEventListener("submit", () => {
+        const inputPlayerOne = document.querySelector('#player-one').value;
+        const inputPlayerTwo = document.querySelector('#player-two').value;
+        game = GameController(
+            inputPlayerOne || "Player 1",
+            inputPlayerTwo || "Player 2"
+        );
+        updateScreen();
+        winnerAnnounce.textContent = "";
+        boardDiv.removeEventListener("click", clickHandlerBoard); 
+        boardDiv.addEventListener("click", clickHandlerBoard);
+        submitForm.reset();
+    });
+
+    const cancelBtn = document.querySelector('#cancel-btn');
+    cancelBtn.addEventListener("click", () => {
+        submitForm.reset();
+        dialog.close();
+    })
+
+
     const updateScreen = () => {
         boardDiv.textContent = "";
         const displayBoard = game.getBoard();
@@ -184,15 +217,22 @@ function ScreenController(){
             if (result) {
                 winnerAnnounce.textContent = result;
                 boardDiv.removeEventListener("click", clickHandlerBoard);
+                startBtn.textContent = 'Restart';
             }
         }
     };
+    
 
     boardDiv.addEventListener("click", clickHandlerBoard);
 
     updateScreen();
+
+
 }
 
 
 ScreenController()
+
+
+
 

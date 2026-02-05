@@ -8,7 +8,26 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h1 id="turn">Tic Tac Toe</h1>
+    <div id="start">
+        <dialog>
+            <form method="dialog">
+                <div>
+                    <label for="player-one">Player One's Name: </label>
+                    <input type="text" id="player-one" name="player-one">
+                </div>
+                <div>
+                    <label for="player-two">Player Two's Name: </label>
+                    <input type="text" id="player-two" name="player-two">
+                </div>
+                <div>
+                    <button id="cancel-btn" type="button" value="cancel" formnovalidate>Cancel</button>
+                    <button id="submit-btn" type="submit">Submit</button>
+                </div>
+        
+            </form>
+        </dialog>
+    </div>
+    <h1 id="turn"></h1>
     <div id="board"></div>
     <h1 id="result"></h1>
 </body>
