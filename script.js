@@ -13,20 +13,15 @@ function Gameboard() {
     const getBoard = () => board;
 
     const dropToken = (row, column, player) => {
-            board[row][column].addToken(player);
+        board[row][column].addToken(player);
     };
 
-    const printBoard = () => {
-        const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
-        console.log(boardWithCellValues);
-    };
-
-    return { getBoard, dropToken, printBoard };
+    return { getBoard, dropToken };
 }
 
 
 function Cell() {
-    let value = 0;
+    let value = "";
 
     const addToken = (player) => {
         value = player;
@@ -51,11 +46,11 @@ function GameController(
     const players = [
         {
             name: playerOneName,
-            token: 1
+            token: "O",
         },
         {
             name: playerTwoName,
-            token: 2
+            token: "X",
         }
     ];
 
@@ -66,11 +61,6 @@ function GameController(
     };
     const getActivePlayer = () => activePlayer;
 
-    const printNewRound = () => {
-        boardInstance.printBoard();
-        console.log(`${getActivePlayer().name}'s turn.`);
-    };
-
     const playRound = (row, column) => {
         
         boardInstance.dropToken(row, column, getActivePlayer().token);
@@ -79,7 +69,6 @@ function GameController(
         const boardArray = boardInstance.getBoard();
         let winner = "";
 
-        // check row for winner  
         for (let i = 0; i < boardArray.length; i++) {
             let matchRow = 0;
             for (let j = 0; j < boardArray[i].length; j++) {
@@ -91,7 +80,6 @@ function GameController(
                 }
             }
         }
-        // check column for winner
         for (let i = 0; i < boardArray.length; i++){
             let matchColumn = 0;
             for (let j = 0; j < boardArray[i].length; j++) {
@@ -103,7 +91,6 @@ function GameController(
                 }
             }
         }
-        // check diagonals for winner
         let matchDiagonalLeft = 0;
         for (let i = 0; i < boardArray.length; i++) {
             const cellMark = boardArray[i][i].getValue();
@@ -118,16 +105,14 @@ function GameController(
             const cellMark = boardArray[boardArray.length-1-i][i].getValue();
             if (playerMark === cellMark) matchDiagonalRight++;
             if (matchDiagonalRight === boardArray.length) {
-                // console.log(`Winner is ${getActivePlayer().name}`)
                 winner = `Winner is ${getActivePlayer().name}`;
                 return winner
             }
         }
-        // check tie
         let matchTie = 0;
         for (let i = 0; i < boardArray.length; i++) {
             const row = boardArray[i];
-            if (row.every(cell => cell.getValue() !== 0)) matchTie++;
+            if (row.every(cell => cell.getValue() !== "")) matchTie++;
             if (matchTie === boardArray.length) {
                 winner = "It's a tie!";
                 return winner;
@@ -135,11 +120,7 @@ function GameController(
         }
 
         switchPlayerTurn();
-        printNewRound();
-        
     };
-
-    printNewRound();
 
     return {
         playRound,
@@ -171,8 +152,8 @@ function ScreenController(){
         const inputPlayerOne = document.querySelector('#player-one').value;
         const inputPlayerTwo = document.querySelector('#player-two').value;
         game = GameController(
-            inputPlayerOne || "Player 1",
-            inputPlayerTwo || "Player 2"
+            inputPlayerOne || "Player One",
+            inputPlayerTwo || "Player Two"
         );
         updateScreen();
         winnerAnnounce.textContent = "";
@@ -211,7 +192,7 @@ function ScreenController(){
         const column = e.target.dataset.column;
         if (row === undefined || column === undefined) return;
         const displayBoard = game.getBoard();
-        if (displayBoard[row][column].getValue() === 0) {
+        if (displayBoard[row][column].getValue() === "") {
             const result = game.playRound(row, column);
             updateScreen();
             if (result) {
@@ -222,14 +203,10 @@ function ScreenController(){
         }
     };
     
-
     boardDiv.addEventListener("click", clickHandlerBoard);
 
     updateScreen();
-
-
 }
-
 
 ScreenController()
 
